@@ -48,7 +48,7 @@ Full statistical details (tests, model summaries, p‑values) are documented in 
 ├─ CITATION.cff            # How to cite this work
 ├─ CODE_OF_CONDUCT.md      # Community standards
 ├─ CONTRIBUTING.md         # How to contribute
-├─ LICENSE                 # Project license (e.g., MIT)
+├─ LICENSE                 # Project license
 └─ README.md               # You are here
 ```
 
@@ -79,18 +79,7 @@ Full statistical details (tests, model summaries, p‑values) are documented in 
 | `ANXIETY` | numeric | DASS‑21 Anxiety (post‑scaling) |
 | `CBull` | factor {No, Yes} | Self‑reported cyberbullying experience |
 
-> ⚠️ **PII**: No direct identifiers are stored. If you work with raw data, keep it private (`data/raw/` ignored via `.gitignore`).
-
-
-## ▶️ Quick Start (R)
-1. **Clone** the repo and set R working directory to project root.
-2. **Install** packages on first run (once): open `analysis/00_setup.R`.
-3. **Place data** in `data/processed/` (e.g., `study_processed.csv`).
-4. **Run pipeline**
-   ```r
-   source("analysis/99_repro.R")
-   ```
-   Outputs will be written to `outputs/figures/` and `outputs/tables/`.
+> ⚠️ **PII**: No direct identifiers are stored.
 
 
 ## 📊 Reproducibility
@@ -127,10 +116,6 @@ Full statistical details (tests, model summaries, p‑values) are documented in 
 Please read `CONTRIBUTING.md` for guidelines on issues, branches (feature/bugfix/docs), commits, and PR reviews. All contributors must follow the `CODE_OF_CONDUCT.md`.
 
 
-## 📄 License
-Recommended: **MIT License** (permissive, research‑friendly). You may switch to CC‑BY‑4.0 for data/docs. See `LICENSE`.
-
-
 ## 📚 Citation
 If you use this repository, please cite:
 
@@ -139,14 +124,13 @@ If you use this repository, please cite:
 cff-version: 1.2.0
 title: Exploring the Impact of Social Media Engagement on Mental Wellbeing (DASS‑21 + R)
 authors:
-  - family-names: Teotia
-    given-names: Shubham
+  - family-names: Iqbal
+    given-names: M Nafees
   - family-names: Khan
     given-names: Anzar
-  # … add full author list …
 version: 1.0.0
 date-released: 2024-06-01
-repository-code: https://github.com/<user>/<repo>
+repository-code: https://github.com/inafees14/social-media-mental-wellbeing
 ```
 
 
