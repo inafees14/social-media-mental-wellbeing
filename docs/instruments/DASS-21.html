@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DASS‑21 Questionnaire</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --card: #f8fafc;
+      --text: #0f172a;
+      --muted: #475569;
+      --accent: #2563eb;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text); background: var(--bg);
+    }
+    .container { max-width: 1000px; margin: 24px auto; padding: 0 16px 80px; }
+    header { position: sticky; top: 0; background: var(--bg); padding: 12px 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; z-index: 10; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    .subtitle { color: var(--muted); font-size: 14px; margin: 0; }
+
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin: 16px 0; }
+    .legend { font-weight: 700; margin-bottom: 8px; }
+
+    details { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 12px 12px; margin: 8px 0 16px; }
+    details summary { cursor: pointer; font-weight: 600; }
+
+    .grid { display: grid; gap: 8px; }
+    @media (min-width: 720px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th.sticky { position: sticky; top: 56px; background: var(--bg); z-index: 5; }
+    thead th { font-size: 14px; color: var(--muted); font-weight: 600; }
+
+    .scale { display: grid; grid-template-columns: 1fr repeat(4, max-content); gap: 8px; align-items: center; }
+    .item { padding: 10px; border-radius: 12px; background: #fff; border: 1px solid var(--border); }
+    .item p { margin: 0 0 8px; }
+
+    .row { display: grid; grid-template-columns: 1fr repeat(4, 80px); gap: 8px; align-items: start; }
+    .row .label { padding-right: 8px; }
+
+    .controls { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); border-top: 1px solid var(--border); padding: 12px 16px; display: flex; gap: 8px; justify-content: center; backdrop-filter: saturate(1.2) blur(6px); }
+    button, .btn { appearance: none; border: 1px solid var(--border); background: #fff; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+    button.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .results { display: none; }
+    .results.active { display: block; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-weight: 700; font-size: 12px; border: 1px solid var(--border); }
+    .muted { color: var(--muted); }
+    .small { font-size: 12px; }
+    .notice { background: #fff7ed; border: 1px solid #fed7aa; padding: 12px; border-radius: 12px; }
+    .ok { background: #ecfdf5; border: 1px solid #a7f3d0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>DASS‑21 Questionnaire</h1>
+      <p class="subtitle">Past week self‑report · Depression, Anxiety, Stress Scales (21‑item short form). For research use and screening only — not a medical diagnosis.</p>
+    </header>
+
+    <section class="card">
+      <div class="legend">Instructions</div>
+      <p>Read each statement and select the option that indicates how much the statement applied to you <strong>over the past week</strong>.</p>
+      <details>
+        <summary>Response Options (0–3)</summary>
+        <ul>
+          <li><strong>0</strong> — Did not apply to me at all</li>
+          <li><strong>1</strong> — Applied to me to some degree, or some of the time</li>
+          <li><strong>2</strong> — Applied to me to a considerable degree, or a good part of the time</li>
+          <li><strong>3</strong> — Applied to me very much, or most of the time</li>
+        </ul>
+      </details>
+      <div class="notice small">Note: Subscale scores are summed and then multiplied by 2 as per DASS‑21 convention.</div>
+    </section>
+
+    <form id="dassForm" novalidate>
+      <section class="card">
+        <div class="legend">Items (1–21)</div>
+        <div class="grid">
+          <!-- Items will be injected here by JS -->
+          <div id="items"></div>
+        </div>
+      </section>
+
+      <section class="card results" id="results">
+        <div class="legend">Your Scores</div>
+        <div class="grid grid-2">
+          <div>
+            <h3>Depression</h3>
+            <p class="muted small">Items: 3, 5, 10, 13, 16, 17, 21</p>
+            <p><span id="depRaw" class="badge"></span> raw · ×2 ⇒ <strong id="depScore">0</strong></p>
+            <p>Severity: <strong id="depBand">–</strong></p>
+          </div>
+          <div>
+            <h3>Anxiety</h3>
+            <p class="muted small">Items: 2, 4, 7, 9, 15, 19, 20</p>
+            <p><span id="anxRaw" class="badge"></span> raw · ×2 ⇒ <strong id="anxScore">0</strong></p>
+            <p>Severity: <strong id="anxBand">–</strong></p>
+          </div>
+          <div>
+            <h3>Stress</h3>
+            <p class="muted small">Items: 1, 6, 8, 11, 12, 14, 18</p>
+            <p><span id="strRaw" class="badge"></span> raw · ×2 ⇒ <strong id="strScore">0</strong></p>
+            <p>Severity: <strong id="strBand">–</strong></p>
+          </div>
+          <div>
+            <h3>Total</h3>
+            <p class="muted small">Sum of subscales (already ×2)</p>
+            <p><strong id="totalScore">0</strong></p>
+            <p class="small muted">Save/print for your records. For clinical concerns, contact a qualified professional.</p>
+          </div>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <div class="controls">
+    <button id="validateBtn" class="primary" type="button">Calculate Scores</button>
+    <button id="resetBtn" type="button">Clear Responses</button>
+    <button id="printBtn" type="button">Print / Save PDF</button>
+    <a id="exportBtn" class="btn" href="#" download>Export CSV</a>
+  </div>
+
+  <script>
+    // --- DASS-21 items (Lovibond & Lovibond, 1995) ---
+    const items = [
+      { n:1,  text:"I found it hard to wind down" },
+      { n:2,  text:"I was aware of dryness of my mouth" },
+      { n:3,  text:"I couldn’t seem to experience any positive feeling at all" },
+      { n:4,  text:"I experienced breathing difficulty (e.g., excessively rapid breathing, breathlessness without physical exertion)" },
+      { n:5,  text:"I found it difficult to work up the initiative to do things" },
+      { n:6,  text:"I tended to over-react to situations" },
+      { n:7,  text:"I experienced trembling (e.g., in the hands)" },
+      { n:8,  text:"I felt that I was using a lot of nervous energy" },
+      { n:9,  text:"I was worried about situations in which I might panic and make a fool of myself" },
+      { n:10, text:"I felt that I had nothing to look forward to" },
+      { n:11, text:"I found myself getting agitated" },
+      { n:12, text:"I found it difficult to relax" },
+      { n:13, text:"I felt down-hearted and blue" },
+      { n:14, text:"I was intolerant of anything that kept me from getting on with what I was doing" },
+      { n:15, text:"I felt I was close to panic" },
+      { n:16, text:"I was unable to become enthusiastic about anything" },
+      { n:17, text:"I felt I wasn’t worth much as a person" },
+      { n:18, text:"I felt that I was rather touchy" },
+      { n:19, text:"I was aware of the action of my heart in the absence of physical exertion (e.g., sense of heart rate increase, heart missing a beat)" },
+      { n:20, text:"I felt scared without any good reason" },
+      { n:21, text:"I felt that life was meaningless" }
+    ];
+
+    const depressionIdx = new Set([3,5,10,13,16,17,21]);
+    const anxietyIdx    = new Set([2,4,7,9,15,19,20]);
+    const stressIdx     = new Set([1,6,8,11,12,14,18]);
+
+    const bands = {
+      depression: [
+        { max:  9, label: 'Normal' },
+        { max: 13, label: 'Mild' },
+        { max: 20, label: 'Moderate' },
+        { max: 27, label: 'Severe' },
+        { max: Infinity, label: 'Extremely Severe' }
+      ],
+      anxiety: [
+        { max:  7, label: 'Normal' },
+        { max:  9, label: 'Mild' },
+        { max: 14, label: 'Moderate' },
+        { max: 19, label: 'Severe' },
+        { max: Infinity, label: 'Extremely Severe' }
+      ],
+      stress: [
+        { max: 14, label: 'Normal' },
+        { max: 18, label: 'Mild' },
+        { max: 25, label: 'Moderate' },
+        { max: 33, label: 'Severe' },
+        { max: Infinity, label: 'Extremely Severe' }
+      ]
+    };
+
+    function bandFor(score, scale) {
+      return bands[scale].find(b => score <= b.max)?.label || '';
+    }
+
+    // Render items
+    const itemsRoot = document.getElementById('items');
+    items.forEach(({n, text}) => {
+      const row = document.createElement('div');
+      row.className = 'row item';
+      row.innerHTML = `
+        <div class="label"><strong>${n}.</strong> ${text}</div>
+        ${[0,1,2,3].map(v => `
+          <label style="display:flex; gap:6px; align-items:center; justify-self:center">
+            <input type="radio" name="q${n}" value="${v}" aria-label="Item ${n} option ${v}">
+            ${v}
+          </label>
+        `).join('')}
+      `;
+      itemsRoot.appendChild(row);
+    });
+
+    const validateBtn = document.getElementById('validateBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const printBtn = document.getElementById('printBtn');
+    const exportBtn = document.getElementById('exportBtn');
+
+    function collectResponses() {
+      const values = {};
+      let missing = [];
+      items.forEach(({n}) => {
+        const chosen = document.querySelector(`input[name=q${n}]:checked`);
+        if (!chosen) missing.push(n);
+        values[n] = chosen ? Number(chosen.value) : null;
+      });
+      return { values, missing };
+    }
+
+    function calcScores(vals) {
+      let dep = 0, anx = 0, str = 0;
+      for (const [k, v] of Object.entries(vals)) {
+        if (v === null) continue;
+        const n = Number(k);
+        if (depressionIdx.has(n)) dep += v;
+        if (anxietyIdx.has(n))    anx += v;
+        if (stressIdx.has(n))     str += v;
+      }
+      const depScaled = dep * 2;
+      const anxScaled = anx * 2;
+      const strScaled = str * 2;
+      return {
+        raw: { dep, anx, str },
+        scaled: { dep: depScaled, anx: anxScaled, str: strScaled },
+        total: depScaled + anxScaled + strScaled
+      };
+    }
+
+    function showResults(scores) {
+      document.getElementById('depRaw').textContent = scores.raw.dep;
+      document.getElementById('anxRaw').textContent = scores.raw.anx;
+      document.getElementById('strRaw').textContent = scores.raw.str;
+      document.getElementById('depScore').textContent = scores.scaled.dep;
+      document.getElementById('anxScore').textContent = scores.scaled.anx;
+      document.getElementById('strScore').textContent = scores.scaled.str;
+      document.getElementById('totalScore').textContent = scores.total;
+      document.getElementById('depBand').textContent = bandFor(scores.scaled.dep, 'depression');
+      document.getElementById('anxBand').textContent = bandFor(scores.scaled.anx, 'anxiety');
+      document.getElementById('strBand').textContent = bandFor(scores.scaled.str, 'stress');
+      document.getElementById('results').classList.add('active');
+    }
+
+    function scrollToFirstMissing(missing) {
+      if (!missing.length) return;
+      const el = document.querySelector(`input[name=q${missing[0]}]`);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function toCSV(values, scores) {
+      const header = ['item','response'];
+      const rows = Object.entries(values).map(([k,v]) => `${k},${v ?? ''}`);
+      const lines = [header.join(','), ...rows,
+        '', 'subscale,raw,scaled,band',
+        `Depression,${scores.raw.dep},${scores.scaled.dep},${bandFor(scores.scaled.dep,'depression')}`,
+        `Anxiety,${scores.raw.anx},${scores.scaled.anx},${bandFor(scores.scaled.anx,'anxiety')}`,
+        `Stress,${scores.raw.str},${scores.scaled.str},${bandFor(scores.scaled.str,'stress')}`,
+        '', `Total,,${scores.total},`
+      ];
+      return lines.join('\n');
+    }
+
+    validateBtn.addEventListener('click', () => {
+      const { values, missing } = collectResponses();
+      if (missing.length) {
+        alert(`Please answer all items. Missing: ${missing.join(', ')}`);
+        scrollToFirstMissing(missing);
+        return;
+      }
+      const scores = calcScores(values);
+      showResults(scores);
+      // Prepare CSV export
+      const csv = toCSV(values, scores);
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      exportBtn.href = url;
+      exportBtn.download = `dass21_${new Date().toISOString().slice(0,10)}.csv`;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      document.getElementById('dassForm').reset();
+      document.getElementById('results').classList.remove('active');
+      exportBtn.removeAttribute('href');
+      exportBtn.removeAttribute('download');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    printBtn.addEventListener('click', () => window.print());
+  </script>
+</body>
+</html>
